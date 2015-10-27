@@ -25,11 +25,25 @@
                 
             }
 
+            setInterval(function () {
+                getTrainLocations()
+            }, 30 * 1000); // 30 * 1000 milsec
+
+            var trainMarkers = []
             function setTrainMarkers(body) {
                 trains = JSON.parse(body)
                 for (i = 0; i < trains.length; i++) {
-                    train = L.marker([trains[i].VehicleLatitude, trains[i].VehicleLongitude]).addTo(map);
                     
+                    if (trainMarkers[i] == null){
+                        trainMarkers[i] = L.marker([trains[i].VehicleLatitude, trains[i].VehicleLongitude]).addTo(map);
+                    }
+                    else {
+                        trainMarkers[i].setLatLng([trains[i].VehicleLatitude, trains[i].VehicleLongitude])
+                    }
+                    
+
+                    
+
                     direction = "Unknown";
                     switch(trains[i].Direction ) {
                         case 1:
@@ -52,7 +66,8 @@
 
 					delta = (currentTime - lastUpdateMS)/1000
 
-                    train.bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber).openPopup();
+					trainMarkers[i].bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber);
+					trainMarkers.length = trains.length
                 }
             }
 
