@@ -45,11 +45,19 @@
                             direction = "North"
                             break;
                     }
-                    train.bindPopup("Speed: " + trains[i].Speed + "<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber).openPopup();
+                    currentTime = (new Date).getTime();
+                    lastUpdate = trains[i].LocationTime
+                    r = /\/Date\((\d+)-(\d+)/;
+                    lastUpdateMS = r.exec(lastUpdate)[1] 
+
+					delta = (currentTime - lastUpdateMS)/1000
+
+                    train.bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber).openPopup();
                 }
             }
+
         </script>
-       
-           
+
+
     </div>
 </div>
