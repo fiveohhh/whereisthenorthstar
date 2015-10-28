@@ -4,14 +4,42 @@
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
         <div style="height: 100%; width=100%" id="map"></div>
-        <script>var map = L.map('map').setView([45.1978, -93.3872], 10);
+        <script>
+            var stationIcon = L.icon({
+                iconUrl: 'station.png',
+                iconSize: [20, 20],
+                iconAnchor: [22, 20],
+                popupAnchor: [-3, -76],
+                shadowSize: [68, 95],
+                shadowAnchor: [22, 94]
+            });
+
+            var stationLocations = {
+                "stations": [
+                    { "name": "Big Lake", "location": [45.329575, -93.729446] },
+                    { "name": "Elk River", "location": [45.2827, -93.5425] },
+                    { "name": "Ramsey", "location": [45.231902, -93.461793] },
+                    { "name": "Anoka", "location": [45.207886, -93.384166] },
+                    { "name": "Coon Rapids", "location": [45.191205, -93.351637] },
+                    { "name": "Fridley", "location": [45.078785, -93.271027] },
+                    { "name": "Minneapolis", "location": [44.983435, -93.276897] },
+                ]
+            };
+
+           
+
+            var map = L.map('map').setView([45.1978, -93.3872], 10);
             L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
                 maxZoom: 18,
                 id: 'chiefmarley.o0f37fnh',
                 accessToken: 'pk.eyJ1IjoiY2hpZWZtYXJsZXkiLCJhIjoiY2lnOG1uZ2lxMGxiZXRpa25wbnl2ZGFhdiJ9.nYje5e0bc4vobqWQIEdJLw'
             }).addTo(map);
-        
+
+            for (i = 0; i < stationLocations.stations.length; i++) {
+                L.marker([stationLocations.stations[i].location[0], stationLocations.stations[i].location[1]], { icon: stationIcon }).addTo(map);
+            }
+
             getTrainLocations()
 
             function getTrainLocations() {
