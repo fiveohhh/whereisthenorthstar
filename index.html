@@ -1,5 +1,5 @@
 ﻿<div class="container">
-    
+
     <div class="row">
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
@@ -26,7 +26,7 @@
                 ]
             };
 
-           
+
 
             var map = L.map('map').setView([45.1978, -93.3872], 10);
             L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -42,15 +42,17 @@
 
             getTrainLocations()
 
+
             function getTrainLocations() {
                 var xmlHttp = new XMLHttpRequest();
-                xmlHttp.onreadystatechange = function() { 
-                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                xmlHttp.onreadystatechange = function () {
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                         setTrainMarkers(xmlHttp.responseText);
+                    }
                 }
-                xmlHttp.open("GET", "http://svc.metrotransit.org/NexTrip/VehicleLocations/888?format=json", true); // true for asynchronous 
+                xmlHttp.open("GET", "http://svc.metrotransit.org/NexTrip/VehicleLocations/888?format=json", true); // true for asynchronous
                 xmlHttp.send(null);
-                
+
             }
 
             setInterval(function () {
@@ -61,19 +63,19 @@
             function setTrainMarkers(body) {
                 trains = JSON.parse(body)
                 for (i = 0; i < trains.length; i++) {
-                    
-                    if (trainMarkers[i] == null){
+
+                    if (trainMarkers[i] == null) {
                         trainMarkers[i] = L.marker([trains[i].VehicleLatitude, trains[i].VehicleLongitude]).addTo(map);
                     }
                     else {
                         trainMarkers[i].setLatLng([trains[i].VehicleLatitude, trains[i].VehicleLongitude])
                     }
-                    
 
-                    
+
+
 
                     direction = "Unknown";
-                    switch(trains[i].Direction ) {
+                    switch (trains[i].Direction) {
                         case 1:
                             direction = "South"
                             break;
@@ -90,12 +92,12 @@
                     currentTime = (new Date).getTime();
                     lastUpdate = trains[i].LocationTime
                     r = /\/Date\((\d+)-(\d+)/;
-                    lastUpdateMS = r.exec(lastUpdate)[1] 
+                    lastUpdateMS = r.exec(lastUpdate)[1]
 
-					delta = (currentTime - lastUpdateMS)/1000
+                    delta = (currentTime - lastUpdateMS) / 1000
 
-					trainMarkers[i].bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber);
-					trainMarkers.length = trains.length
+                    trainMarkers[i].bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber);
+                    trainMarkers.length = trains.length
                 }
             }
 
