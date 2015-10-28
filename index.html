@@ -14,6 +14,15 @@
                 shadowAnchor: [22, 94]
             });
 
+            var trailIcon = L.icon({
+                iconUrl: 'trail.png',
+                iconSize: [10, 10],
+                iconAnchor: [5, 5],
+                popupAnchor: [-3, -76],
+                shadowSize: [10, 10],
+                shadowAnchor: [10, 10]
+            });
+
             var stationLocations = {
                 "stations": [
                     { "name": "Big Lake", "location": [45.329575, -93.729446] },
@@ -57,18 +66,27 @@
 
             setInterval(function () {
                 getTrainLocations()
-            }, 30 * 1000); // 30 * 1000 milsec
+            }, 30 * 1000); // Update every 30 seconds
 
             var trainMarkers = []
+            var trailMarkers = []
             function setTrainMarkers(body) {
                 trains = JSON.parse(body)
                 for (i = 0; i < trains.length; i++) {
 
                     if (trainMarkers[i] == null) {
+                        // Add marker the first time
                         trainMarkers[i] = L.marker([trains[i].VehicleLatitude, trains[i].VehicleLongitude]).addTo(map);
                     }
                     else {
-                        trainMarkers[i].setLatLng([trains[i].VehicleLatitude, trains[i].VehicleLongitude])
+                        // add trail marker
+                        oldLocation = trainMarkers[i].getLatLng();
+                        // Move previous location from train to trailpoint
+                        trailMarkers.unshift(L.marker(oldLocation, { icon: trailIcon }).addTo(map))
+
+                        // update markers
+                        trainMarkers[i].setLatLng([trains[i].VehicleLatitude, trains[i].VehicleLongitude]);
+                        
                     }
 
 
@@ -97,7 +115,19 @@
                     delta = (currentTime - lastUpdateMS) / 1000
 
                     trainMarkers[i].bindPopup("Updated " + delta + " seconds ago<br>Direction: " + direction + "<br>Block: " + trains[i].BlockNumber);
+
+                    // clear out any old markers
                     trainMarkers.length = trains.length
+
+                    if (trailMarkers.length > 50) {
+                        // let's only show the 50 latest.
+                        trailMarkers.length = 50
+                    }
+                    
+
+                    // clear out old trail points
+                    // map.removeLayer(marker)
+
                 }
             }
 
